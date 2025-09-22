@@ -174,7 +174,7 @@ def termux_http_media_player(command: str, filename: str = None) -> str:
             cmd = 'pkill -9 mpv'
         
         stdout, stderr, exit_code = client.execute_command(cmd)
-        
+        print(f'termux_http_media_player: stdout: {stdout}, stderr: {stderr}, exit_code: {exit_code}')
         response = stdout.strip() if stdout else ""
         return response if response else f"{command} 已执行"
     except Exception as e:
