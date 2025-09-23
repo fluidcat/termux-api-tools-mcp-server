@@ -224,8 +224,6 @@ def termux_tts_engines() -> list:
 def termux_tts_speak(text: str = None, options: dict = None) -> str:
     """使用系统文本转语音引擎朗读文本"""
     try:
-        client.execute_command("pkill com.termux.api")
-        
         cmd = ["termux-tts-speak"]
         # 选项处理
         if options:
@@ -245,6 +243,8 @@ def termux_tts_speak(text: str = None, options: dict = None) -> str:
                 cmd.extend(["-s", options["stream"]])
         
         client = get_ssh_client()
+        client.execute_command("pkill com.termux.api")
+        client.execute_command("pgrep -f TextToSpeech | xargs kill -9")
         
         if text:
             cmd.append(text)
