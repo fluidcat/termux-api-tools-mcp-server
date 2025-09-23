@@ -170,7 +170,7 @@ def termux_http_media_player(command: str, filename: str = None) -> str:
         client = get_ssh_client()
         if command == "play" and filename:
             client.execute_command('pkill -9 mpv >/dev/null 2>&1')
-            cmd = f'mpv "{filename}" --no-video > /dev/null 2>&1 & echo $!'
+            cmd = f'mpv "{filename}" --no-video --terminal=no > /dev/null 2>&1 & echo $!'
         elif command == "stop":
             cmd = 'pkill -9 mpv'
         else:
@@ -190,7 +190,8 @@ def search_music(keyword:str) -> dict:
     """
     try:
         import requests
-        url = f"https://api.cenguigui.cn/api/mg_music/?msg={keyword}&n=1&type=json"
+        from urllib.parse import quote
+        url = f"https://api.cenguigui.cn/api/mg_music/?msg={quote(keyword)}&n=1&type=json"
         response = requests.get(url)
         if response.status_code == 200:
             data = response.json()
