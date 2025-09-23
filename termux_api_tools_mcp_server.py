@@ -1,4 +1,5 @@
 import logging
+import re
 from fastmcp import FastMCP
 import json
 import os
@@ -247,7 +248,7 @@ def termux_tts_speak(text: str = None, options: dict = None) -> str:
         client.execute_command("pgrep -f TextToSpeech | xargs kill -9")
         
         if text:
-            cmd.append(text)
+            cmd.append(re.sub(r'[\x00-\x1F\x7F]', '', text))
             cmd += ['>', '/dev/null', '2>&1' '&' , 'echo', 'running...']
             stdout, stderr, exit_code = client.execute_termux_command(cmd)
         else:
