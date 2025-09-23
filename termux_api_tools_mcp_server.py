@@ -170,7 +170,7 @@ def termux_http_media_player(command: str, filename: str = None) -> str:
         client = get_ssh_client()
         if command == "play" and filename:
             client.execute_command('pkill -9 mpv >/dev/null 2>&1')
-            cmd = f'nohup mpv "{filename}" --no-video > /dev/null 2>&1 &'
+            cmd = f'mpv "{filename}" --no-video > /dev/null 2>&1 & echo $!'
         elif command == "stop":
             cmd = 'pkill -9 mpv'
         else:
@@ -178,7 +178,6 @@ def termux_http_media_player(command: str, filename: str = None) -> str:
         
         stdout, stderr, exit_code = client.execute_command(cmd)
         response = f'termux_http_media_player 已执行. stdout: {stdout}, stderr: {stderr}, exit_code: {exit_code}'
-        logging.debug(f'termux_http_media_player: stdout: {stdout}, stderr: {stderr}, exit_code: {exit_code}')
         return response if response else f"{command} 已执行"
     except Exception as e:
         return f"错误: {str(e)}"
@@ -246,13 +245,14 @@ def termux_tts_speak(text: str = None, options: dict = None) -> str:
         
         if text:
             cmd.append(text)
+            cmd += ['>', '/dev/null', '2>&1' '&' , 'echo', 'running...']
             stdout, stderr, exit_code = client.execute_termux_command(cmd)
         else:
             # 从标准输入读取内容
             text = sys.stdin.read()
             stdout, stderr, exit_code = client.execute_termux_command(cmd, input_data=text)
         
-        return "文本朗读已启动" if exit_code == 0 else f"错误: {stderr}"
+        return "成功" if exit_code == 0 else f"错误: {stderr}"
     except Exception as e:
         return f"错误: {str(e)}"
 
