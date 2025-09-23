@@ -1,3 +1,4 @@
+import logging
 from fastmcp import FastMCP
 import json
 import os
@@ -172,9 +173,12 @@ def termux_http_media_player(command: str, filename: str = None) -> str:
             cmd = f'nohup mpv "{filename}" --no-video > /dev/null 2>&1 &'
         elif command == "stop":
             cmd = 'pkill -9 mpv'
+        else:
+            return "错误: 无效的命令或缺少文件名"
         
         stdout, stderr, exit_code = client.execute_command(cmd)
         response = f'termux_http_media_player 已执行. stdout: {stdout}, stderr: {stderr}, exit_code: {exit_code}'
+        logging.debug(f'termux_http_media_player: stdout: {stdout}, stderr: {stderr}, exit_code: {exit_code}')
         return response if response else f"{command} 已执行"
     except Exception as e:
         return f"错误: {str(e)}"
