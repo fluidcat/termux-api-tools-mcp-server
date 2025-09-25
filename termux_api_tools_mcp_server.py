@@ -49,8 +49,13 @@ class TermuxSSHClient:
     
     def ensure_connected(self) -> bool:
         """确保SSH连接已建立"""
-        if not self.connected or not self.client:
-            return self.connect()
+        if not self.connected or not self.client or not self.client.get_transport() or not self.client.get_transport().is_active():
+            try:
+                if self.client:
+                    self.client.close()     
+            except Exception as e:
+                pass
+            return self.connect()       
         return True
     
     def execute_command(self, command: str) -> tuple:
